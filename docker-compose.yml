@@ -1,0 +1,54 @@
+
+services:
+
+  servidor1:
+    build: ./app
+    container_name: servidor1
+    environment:
+      SERVIDOR: "Servidor 1"
+      VIDEOS_DIR: /videos
+    volumes:
+      - videos_compartidos:/videos
+    expose:
+      - "5000"
+    restart: unless-stopped
+
+  servidor2:
+    build: ./app
+    container_name: servidor2
+    environment:
+      SERVIDOR: "Servidor 2"
+      VIDEOS_DIR: /videos
+    volumes:
+      - videos_compartidos:/videos
+    expose:
+      - "5000"
+    restart: unless-stopped
+
+  servidor3:
+    build: ./app
+    container_name: servidor3
+    environment:
+      SERVIDOR: "Servidor 3"
+      VIDEOS_DIR: /videos
+    volumes:
+      - videos_compartidos:/videos
+    expose:
+      - "5000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: balanceador
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - servidor1
+      - servidor2
+      - servidor3
+    restart: unless-stopped
+
+volumes:
+  videos_compartidos:
